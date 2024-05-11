@@ -1,0 +1,4 @@
+// TODO: check pip freeze in the hardware and put all the pip freeze here
+
+// FIXME: Fix the vibration sensor logic to read for 1 min - yellow and 2 min - confirmed and return the result
+
