@@ -2,3 +2,5 @@
 
 // FIXME: Fix the vibration sensor logic to read for 1 min - yellow and 2 min - confirmed and return the result
 
+docker compose to have user interface, fastapi and user interface
+
