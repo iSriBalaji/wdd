@@ -20,7 +20,7 @@ async def root():
     """
     return the home page [status of wdd]
     """
-    return {"message": "Detect Status of Washer and Dryer!"}
+    return {"message": "Server Running: Detect Status of Washer and Dryer!"}
 
 
 @app.get("/devices/{device_id}")
