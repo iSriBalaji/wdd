@@ -2,6 +2,7 @@ from fastapi import FastAPI, Body
 from datetime import datetime
 from schema import Device
 import uuid
+import uvicorn
 
 app = FastAPI()
 
