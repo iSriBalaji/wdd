@@ -5,12 +5,13 @@ This module contains all the pydantic models used in the project
 
 from pydantic import BaseModel, Field
 from typing import List, Optional
+from datetime import datetime
 
 # Field are used for data validation to a particular filed in the model(table). For each type we have many data validation methods
 
 # TA1: Create constaints for allt eh necessary fields
 # TA2: Fill the optional value to the appropriate fields
-# TA3: Convert the date columns into actual Pydantic datetime column
+# TA3: Convert the date columns into actual Pydantic datetime column - DONE
 
 
 class Device():
@@ -23,9 +24,9 @@ class Device():
     dryer_vib_id: int
     motion_detected: bool
     smoke_detected: bool
-    load_dt: str
-    created_at: str
-    updated_at: str
+    load_dt: datetime
+    created_at: datetime
+    updated_at: datetime
 
     def __init__(self, device_id, house_id, run_id, temperature, humidity, washer_vib_id,dryer_vib_id,motion_detected,smoke_detected,load_dt, created_at, updated_at):
         self.device_id = device_id
@@ -51,9 +52,9 @@ class DeviceRequest(BaseModel):
     dryer_vib_id: Optional[int] = None
     motion_detected: bool
     smoke_detected: bool
-    load_dt: str
-    created_at: str
-    updated_at: str
+    load_dt: datetime
+    created_at: datetime
+    updated_at: datetime
 
     # class Config:
     #     schema_extra = {
