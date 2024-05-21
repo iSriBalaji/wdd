@@ -93,7 +93,6 @@ async def delete_device(delete_device_id: int = Query(gt=0)): #path gives extra 
             check_flag = True
     if check_flag == False:
         raise HTTPException(status_code=404, detail="Device not found to delete")
-
     return True
 
 def create_device_id(device: DeviceRequest):
