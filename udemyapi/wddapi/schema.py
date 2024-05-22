@@ -43,7 +43,7 @@ class Device():
         self.updated_at = updated_at
 
 class DeviceRequest(BaseModel):
-    device_id: Optional[int] = Field(title = "device id will be created on its own")
+    # device_id: Optional[int] = Field(title = "device id will be created on its own")
     house_id: int
     run_id: str
     temperature: float = Field(gt=-100.0, lt=100.0)
@@ -52,9 +52,9 @@ class DeviceRequest(BaseModel):
     dryer_vib_id: Optional[int] = None
     motion_detected: bool
     smoke_detected: bool
-    load_dt: datetime
-    created_at: datetime
-    updated_at: datetime
+    # load_dt: datetime
+    # created_at: datetime
+    # updated_at: datetime
 
     # class Config:
     #     schema_extra = {

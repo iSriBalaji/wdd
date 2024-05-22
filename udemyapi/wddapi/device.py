@@ -101,7 +101,7 @@ async def get_devices(db:db_dependency):
     else:
         raise HTTPException(status_code=404, detail=f"No devices found")
 
-@app.post("/device/create_device",status_code=status.HTTP_201_CREATED)
+@app.post("/device/create",status_code=status.HTTP_201_CREATED)
 async def create_device(db:db_dependency, new_device: DeviceRequest):
     new_device = Device(**new_device.dict())
     new_device = create_device_id(db, new_device)
@@ -109,17 +109,23 @@ async def create_device(db:db_dependency, new_device: DeviceRequest):
     db.commit()
     return True
 
-@app.put("/device/update_device", status_code=status.HTTP_204_NO_CONTENT)
-async def update_device(db:db_dependency, update_device: DeviceRequest):
-    check_flag = False
-    for i,d in enumerate(DEVICES):
-        if d.device_id == update_device.device_id:
-            DEVICES[i] = update_device
-            check_flag = True
-    if check_flag == False:
+@app.put("/device/update/{update_device_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def update_device(db:db_dependency, device_info: DeviceRequest, update_device_id: int = Path(gt=0)):
+    matched_device = db.query(Device).filter(Device.device_id == update_device_id).first()
+    print(matched_device.__dict__)
+
+    if matched_device is None:
         raise HTTPException(status_code=404, detail="Device not found to update")
 
-    return True
+    for key, value in device_info.dict().items():
+        if hasattr(matched_device, key):
+            setattr(matched_device, key, value)
+
+    matched_device.updated_at = datetime.now()
+    print(matched_device.__dict__)
+
+    db.add(matched_device)
+    db.commit()
 
 @app.delete("/device/delete_device", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_device(delete_device_id: int = Query(gt=0)): #path gives extra validation to path parameters
