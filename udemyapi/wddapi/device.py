@@ -7,12 +7,14 @@ from starlette import status
 from database import engine, get_db
 import models
 from models import Device
+from routers import auth
 from fastapi.openapi.utils import get_openapi
 import uuid
 import uvicorn
 from pytz import timezone
 
 app = FastAPI()
+app.include_router(auth.router)
 
 def get_custom_openapi():
     openapi_schema = get_openapi(
@@ -30,15 +32,6 @@ models.Base.metadata.create_all(bind=engine) # we combine models.py and database
 # this only runs when the wdd.db does not exist
 
 db_dependency = Annotated[Session, Depends(get_db)]
-
-DEVICES = [
-    Device(device_id=2327, house_id=65, run_id=str(uuid.uuid4()), temperature=16.04, humidity=21.12,
-           washer_vib_id=32, dryer_vib_id=32, motion_detected=True, smoke_detected=False,
-           load_dt=datetime.now(), created_at=datetime.now(), updated_at=datetime.now()),
-    Device(device_id=1931, house_id=35, run_id=str(uuid.uuid4()), temperature=17.04, humidity=55.12,
-           washer_vib_id=35, dryer_vib_id=312, motion_detected=False, smoke_detected=False,
-           load_dt=datetime.now(), created_at=datetime.now(), updated_at=datetime.now())
-]
 
 
 @app.get("/", status_code=status.HTTP_200_OK)
@@ -61,19 +54,6 @@ async def device(db:db_dependency, device_id: int):
         return device_ls
     else:
         raise HTTPException(status_code=404, detail=f"Device not found with the device_id {device_id}")
-
-
-# @app.get("/device/{device_id}", status_code=status.HTTP_200_OK)
-# async def temperature_threshold(device_id: int = Path(gt = 0), temperature: float = Query(gt=0, lt=100)):
-#     """
-#     return the result of a specific device filtered by temperature threshold
-#     """
-#     if temperature is not None:
-#         device_list = list(filter(lambda x: (x.device_id == device_id and x.temperature <= temperature), DEVICES))
-#     else:
-#         device_list = list(filter(lambda x: x.device_id == device_id, DEVICES))
-#     print(temperature, device_list)
-#     return device_list
 
 
 @app.get("/run_id/{run_id}", status_code=status.HTTP_200_OK)
@@ -112,7 +92,6 @@ async def create_device(db:db_dependency, new_device: DeviceRequest):
 @app.put("/device/update/{update_device_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def update_device(db:db_dependency, device_info: DeviceRequest, update_device_id: int = Path(gt=0)):
     matched_device = db.query(Device).filter(Device.device_id == update_device_id).first()
-    print(matched_device.__dict__)
 
     if matched_device is None:
         raise HTTPException(status_code=404, detail="Device not found to update")
@@ -122,21 +101,20 @@ async def update_device(db:db_dependency, device_info: DeviceRequest, update_dev
             setattr(matched_device, key, value)
 
     matched_device.updated_at = datetime.now()
-    print(matched_device.__dict__)
 
     db.add(matched_device)
     db.commit()
 
 @app.delete("/device/delete_device", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_device(delete_device_id: int = Query(gt=0)): #path gives extra validation to path parameters
-    check_flag = False
-    for i,d in enumerate(DEVICES):
-        if d.device_id == delete_device_id:
-            DEVICES.pop(i)
-            check_flag = True
-    if check_flag == False:
-        raise HTTPException(status_code=404, detail="Device not found to delete")
-    return True
+async def delete_device(db:db_dependency, delete_device_id: int = Query(gt=0)): #path gives extra validation to path parameters
+    matched_device = db.query(Device).filter(Device.device_id == delete_device_id).first()
+
+    if matched_device is None:
+        raise HTTPException(status_code=404, detail="Device not found to update")
+
+    db.query(Device).filter(Device.device_id == delete_device_id).delete()
+    db.commit()
+
 
 def create_device_id(db, device: DeviceRequest):
     device_cnt = db.query(Device).count()
