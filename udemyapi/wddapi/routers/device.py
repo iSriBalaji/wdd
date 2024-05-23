@@ -3,9 +3,10 @@ from datetime import datetime
 from typing import Annotated
 from sqlalchemy.orm import Session
 from database import get_db
-from schema import Device, DeviceRequest
+from schema import DeviceRequest
 from starlette import status
 from models import Device
+from uuid import uuid4
 # from fastapi.openapi.utils import get_openapi
 from pytz import timezone
 
@@ -96,13 +97,16 @@ async def delete_device(db:db_dependency, delete_device_id: int = Query(gt=0)): 
 
 def create_device_id(db, device: DeviceRequest):
     device_cnt = db.query(Device).count()
+
     current_datetime = datetime.now(timezone('America/New_York'))
-    last_device_id = db.query(Device).order_by(Device.device_id.desc()).first().device_id
+    device.run_id = str(uuid4())
     device.load_dt = current_datetime
     device.created_at = current_datetime
     device.updated_at = current_datetime
+
     if(device_cnt==0):
         device.device_id = 1
     else:
+        last_device_id = db.query(Device).order_by(Device.device_id.desc()).first().device_id
         device.device_id = last_device_id + 1
     return device

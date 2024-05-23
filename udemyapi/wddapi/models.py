@@ -25,7 +25,6 @@ class Users(Base):
     load_dt = Column(DateTime)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
-    device_id = Column(Integer, ForeignKey('device.device_id'))
 
 class Device(Base):
     __tablename__ = 'device'

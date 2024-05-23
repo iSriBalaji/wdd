@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from datetime import datetime
 from pytz import timezone
 from typing import Annotated
@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 from starlette import status
 from database import get_db
 from passlib.context import CryptContext
-from schema import Users, UserRequest
+from schema import UserRequest
+from models import Users
 
 router = APIRouter()
 # auth requires separate port to run to authenticate users
@@ -16,10 +17,17 @@ bcrypt_context = CryptContext(schemes = ['bcrypt'], deprecated = 'auto')
 
 @router.post("/authenticate", status_code=status.HTTP_201_CREATED)
 async def create_user(db:db_dependency, user_request: UserRequest):
-    print("In the functions")
+    user_cnt = db.query(Users).count()
+
+    if(user_cnt==0):
+        set_user_id = 1
+    else:
+        last_device_id = db.query(Users).order_by(Users.user_id.desc()).first().user_id
+        set_user_id = last_device_id + 1
+
     current_time = datetime.now(timezone('America/New_York'))
     created_user = Users(
-        user_id = 1,
+        user_id = set_user_id,
         username = user_request.username,
         password= user_request.password,
         hashed_password= bcrypt_context.hash(user_request.password),
@@ -31,10 +39,14 @@ async def create_user(db:db_dependency, user_request: UserRequest):
         role_id= 2,
         load_dt= current_time,
         created_at= current_time,
-        updated_at= current_time,
-        device_id= user_request.device_id
+        updated_at= current_time
         )
 
-    db.add(created_user)
-    db.commit()
+    try:
+        db.add(created_user)
+        db.commit()
+        return {"message": "User created successfully"}
+    except Exception as e:
+        print(f"Error creating user: {e}")
+        raise HTTPException(status_code=404, detail=f"Failed to create user - {e}")
 

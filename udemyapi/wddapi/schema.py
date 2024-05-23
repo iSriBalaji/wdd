@@ -27,7 +27,6 @@ class Users(BaseModel):
     load_dt: datetime
     created_at: datetime
     updated_at: datetime
-    device_id: Optional[int] = None
 
 class UserRequest(BaseModel):
     username: str
@@ -37,12 +36,12 @@ class UserRequest(BaseModel):
     email: str
     phone_number: str
     is_active: bool
-    device_id: Optional[int] = None
 
 
 class Device():
     device_id: int
     house_id: int
+    owner_id: int
     run_id: str
     temperature: float
     humidity: float
@@ -71,6 +70,7 @@ class Device():
 class DeviceRequest(BaseModel):
     # device_id: Optional[int] = Field(title = "device id will be created on its own")
     house_id: int
+    owner_id: int
     run_id: str
     temperature: float = Field(gt=-100.0, lt=100.0)
     humidity: float = Field(gt=20.0, lt=80.0)
