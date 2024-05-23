@@ -13,6 +13,32 @@ from datetime import datetime
 # TA2: Fill the optional value to the appropriate fields
 # TA3: Convert the date columns into actual Pydantic datetime column - DONE
 
+class Users(BaseModel):
+    user_id: int
+    username: str
+    password: str
+    hashed_password: str
+    first_name: str
+    last_name: Optional[str] = None
+    email: str
+    phone_number: str
+    is_active: bool
+    role_id: int
+    load_dt: datetime
+    created_at: datetime
+    updated_at: datetime
+    device_id: Optional[int] = None
+
+class UserRequest(BaseModel):
+    username: str
+    password: str
+    first_name: str
+    last_name: Optional[str] = None
+    email: str
+    phone_number: str
+    is_active: bool
+    device_id: Optional[int] = None
+
 
 class Device():
     device_id: int
