@@ -14,16 +14,6 @@ router = APIRouter(prefix='/device', tags=['device'])
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
-@router.get("/all_device", status_code=status.HTTP_200_OK)
-async def get_all_devices(db:db_dependency):
-    """
-    return all the devices in the system
-    """
-    devices = db.query(Device).all()
-    if devices is not None:
-        return devices
-    else:
-        raise HTTPException(status_code=404, detail=f"No devices found in the system")
 
 @router.get("/{device_id}", status_code=status.HTTP_200_OK)
 async def get_device(db:db_dependency, device_id: int):
@@ -38,18 +28,30 @@ async def get_device(db:db_dependency, device_id: int):
         raise HTTPException(status_code=404, detail=f"Device not found with the device_id {device_id}")
 
 
-@router.get("/run/{run_id}", status_code=status.HTTP_200_OK)
-async def run_status(db:db_dependency, run_id: str):
+@router.get("/run/{id}", status_code=status.HTTP_200_OK)
+async def run_status(db:db_dependency, id: str):
     """
     return the info of a specific run of the device
     """
 
-    run_data = db.query(Device).filter(Device.run_id == run_id).first()
+    run_data = db.query(Device).filter(Device.run_id == id).first()
     if run_data is not None:
         return run_data
     else:
-        raise HTTPException(status_code=404, detail=f"Device not found with the run_id {run_id}")
+        raise HTTPException(status_code=404, detail=f"Device not found with the run_id {id}")
 
+@router.get("/all", status_code=status.HTTP_200_OK)
+async def get_all_devices(db:db_dependency):
+    """
+    return all the devices in the system
+    """
+
+    devices = db.query(Device).all()
+
+    if devices is not None:
+        return devices
+    else:
+        raise HTTPException(status_code=404, detail=f"No devices found in the system")
 
 @router.post("/create",status_code=status.HTTP_201_CREATED)
 async def create_device(db:db_dependency, new_device: DeviceRequest):

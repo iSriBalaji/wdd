@@ -14,16 +14,6 @@ router = APIRouter(prefix='/device', tags=['device'])
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
-@router.get("/all_device", status_code=status.HTTP_200_OK)
-async def get_all_devices(db:db_dependency):
-    """
-    return all the devices in the system
-    """
-    devices = db.query(Device).all()
-    if devices is not None:
-        return devices
-    else:
-        raise HTTPException(status_code=404, detail=f"No devices found in the system")
 
 @router.get("/{device_id}", status_code=status.HTTP_200_OK)
 async def get_device(db:db_dependency, device_id: int):
@@ -38,7 +28,7 @@ async def get_device(db:db_dependency, device_id: int):
         raise HTTPException(status_code=404, detail=f"Device not found with the device_id {device_id}")
 
 
-@router.get("/run/{run_id}", status_code=status.HTTP_200_OK)
+@router.get("/run_id/{run_id}", status_code=status.HTTP_200_OK)
 async def run_status(db:db_dependency, run_id: str):
     """
     return the info of a specific run of the device
@@ -50,6 +40,18 @@ async def run_status(db:db_dependency, run_id: str):
     else:
         raise HTTPException(status_code=404, detail=f"Device not found with the run_id {run_id}")
 
+@router.get("/all", status_code=status.HTTP_200_OK)
+async def get_all_devices(db:db_dependency):
+    """
+    return all the device list in the system
+    """
+
+    devices = db.query(Device).all()
+
+    if devices is not None:
+        return devices
+    else:
+        raise HTTPException(status_code=404, detail=f"No devices found in the system")
 
 @router.post("/create",status_code=status.HTTP_201_CREATED)
 async def create_device(db:db_dependency, new_device: DeviceRequest):
@@ -62,12 +64,12 @@ async def create_device(db:db_dependency, new_device: DeviceRequest):
     db.commit()
     return True
 
-@router.put("/update/{device_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def update_device(db:db_dependency, device_info: DeviceRequest, device_id: int = Path(gt=0)):
+@router.put("/update/{update_device_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def update_device(db:db_dependency, device_info: DeviceRequest, update_device_id: int = Path(gt=0)):
     """
     update a device info
     """
-    matched_device = db.query(Device).filter(Device.device_id == device_id).first()
+    matched_device = db.query(Device).filter(Device.device_id == update_device_id).first()
 
     if matched_device is None:
         raise HTTPException(status_code=404, detail="Device not found to update")
@@ -81,17 +83,17 @@ async def update_device(db:db_dependency, device_info: DeviceRequest, device_id:
     db.add(matched_device)
     db.commit()
 
-@router.delete("/delete/{device_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_device(db:db_dependency, device_id: int = Path(gt=0)): #path gives extra validation to path parameters
+@router.delete("/delete_device", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_device(db:db_dependency, delete_device_id: int = Query(gt=0)): #path gives extra validation to path parameters
     """
     delete a device from the system
     """
-    matched_device = db.query(Device).filter(Device.device_id == device_id).first()
+    matched_device = db.query(Device).filter(Device.device_id == delete_device_id).first()
 
     if matched_device is None:
         raise HTTPException(status_code=404, detail="Device not found to update")
 
-    db.query(Device).filter(Device.device_id == device_id).delete()
+    db.query(Device).filter(Device.device_id == delete_device_id).delete()
     db.commit()
 
 

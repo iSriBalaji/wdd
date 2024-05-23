@@ -30,4 +30,4 @@ async def root():
     """
     return the home page [status of wdd]
     """
-    return {"message": "Server Running: Detect Status of Washer and Dryer!\n Build by isribalaji - contact@isribalaji.in//"}
+    return {"message": "Server Running: Detect Status of Washer and Dryer!\n Build by isribalaji //"}

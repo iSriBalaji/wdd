@@ -19,7 +19,9 @@ async def get_all_devices(db:db_dependency):
     """
     return all the devices in the system
     """
+    print("aaaaaaaaaaaaaaaaa")
     devices = db.query(Device).all()
+    print("bbbbbbbbbbbbbbb")
     if devices is not None:
         return devices
     else:

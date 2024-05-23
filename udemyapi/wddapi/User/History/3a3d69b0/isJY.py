@@ -25,9 +25,6 @@ oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_user(db:db_dependency, user_request: UserRequest):
-    """
-    Create users in the app
-    """
     user_cnt = db.query(Users).count()
 
     if(user_cnt==0):
@@ -64,9 +61,6 @@ async def create_user(db:db_dependency, user_request: UserRequest):
 
 @router.post("/token", status_code=status.HTTP_201_CREATED, response_model=Token)
 async def create_token_for_login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db:db_dependency):
-    """
-    Generate a JWT token when authenticated
-    """
     user = check_credentials(form_data.username, form_data.password, db)
 
     if user:
