@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from datetime import datetime
 from pytz import timezone
 from typing import Annotated
@@ -12,7 +13,7 @@ from models import Users
 router = APIRouter()
 # auth requires separate port to run to authenticate users
 
-db_dependency = Annotated[Session, Depends(get_db)]
+db_dependency = Annotated[Session, Depends(get_db)] # it is a dependency injection
 bcrypt_context = CryptContext(schemes = ['bcrypt'], deprecated = 'auto')
 
 @router.post("/authenticate", status_code=status.HTTP_201_CREATED)
@@ -50,3 +51,24 @@ async def create_user(db:db_dependency, user_request: UserRequest):
         print(f"Error creating user: {e}")
         raise HTTPException(status_code=404, detail=f"Failed to create user - {e}")
 
+
+@router.post("/token", status_code=status.HTTP_201_CREATED)
+async def create_token_for_login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db:db_dependency):
+    check_login_creds = check_credentials(form_data.username, form_data.password, db)
+
+    if check_login_creds:
+        return 'User Authenticated'
+    else:
+        return 'Invalid Credentials'
+
+
+def check_credentials(username: str, password: str, db: db_dependency):
+    user_check = db.query(Users).filter(Users.user_id == username).first()
+    print("USER_CHECK", user_check)
+    if user_check is None:
+        return False
+    print(bcrypt_context.verify(user_check.password, password))
+    if not bcrypt_context.verify(user_check.password, password):
+        return False
+    
+    return True
