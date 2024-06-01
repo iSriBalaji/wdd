@@ -31,7 +31,7 @@ async def create_user(db:db_dependency, user_request: UserRequest):
     user_cnt = db.query(Users).count()
 
     if(user_cnt==0):
-        set_user_id = 1
+        set_user_id = 2300
     else:
         last_device_id = db.query(Users).order_by(Users.user_id.desc()).first().user_id
         set_user_id = last_device_id + 1
@@ -47,6 +47,8 @@ async def create_user(db:db_dependency, user_request: UserRequest):
         email= user_request.email,
         phone_number= user_request.phone_number,
         is_active= user_request.is_active,
+        is_notify_email = user_request.is_notify_email,
+        is_notify_phone = user_request.is_notify_phone,
         role_id= 2,
         load_dt= current_time,
         created_at= current_time,
@@ -56,7 +58,10 @@ async def create_user(db:db_dependency, user_request: UserRequest):
     try:
         db.add(created_user)
         db.commit()
-        return {"message": "User created successfully"}
+        db.refresh(created_user)
+
+        return_body = created_user.__dict__
+        return {"message": "User created successfully", "user_info": return_body}
     except Exception as e:
         print(f"Error creating user: {e}")
         raise HTTPException(status_code=404, detail=f"Failed to create user - {e}")

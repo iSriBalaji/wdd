@@ -20,38 +20,47 @@ class Users(Base):
     last_name = Column(String)
     email = Column(String, unique=True)
     phone_number = Column(String, unique=True)
-    # is_notify_email = Column(Boolean)
-    # is_notify_phone = Column(Boolean)
+    is_notify_email = Column(Boolean)
+    is_notify_phone = Column(Boolean)
     is_active = Column(Boolean, default=True)
     role_id = Column(Integer, ForeignKey('roles.role_id'))
     load_dt = Column(DateTime)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
 
+# class Device(Base):
+#     __tablename__ = 'device'
+#     device_id = Column(Integer, primary_key=True, index=True) # neil told to add index only if there are over 5 - 10 million(some range). he mentioned indexing in small tables can reduce performance so need to remove them in prod
+#     house_id = Column(Integer)
+#     owner_id = Column(Integer, ForeignKey('users.user_id'))
+#     run_id = Column(String)
+#     temperature = Column(Float)
+#     humidity = Column(Float)
+#     washer_vib_id = Column(Integer, default=None)
+#     dryer_vib_id = Column(Integer, default=None)
+#     motion_detected = Column(Boolean)
+#     smoke_detected = Column(Boolean)
+#     load_dt = Column(DateTime)
+#     created_at = Column(DateTime)
+#     updated_at = Column(DateTime)
+
 class Device(Base):
     __tablename__ = 'device'
-    device_id = Column(Integer, primary_key=True, index=True) # neil told to add index only if there are over 5 - 10 million(some range). he mentioned indexing in small tables can reduce performance so need to remove them in prod
-    house_id = Column(Integer)
-    owner_id = Column(Integer, ForeignKey('users.user_id'))
-    run_id = Column(String)
-    temperature = Column(Float)
-    humidity = Column(Float)
-    washer_vib_id = Column(Integer, default=None)
-    dryer_vib_id = Column(Integer, default=None)
-    motion_detected = Column(Boolean)
-    smoke_detected = Column(Boolean)
-    load_dt = Column(DateTime)
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
-
-class DeviceN(Base):
-    __tablename__ = 'devicen'
     device_id = Column(Integer, primary_key=True, index=True)
     facility_id = Column(Integer, ForeignKey('facility.facility_id'))
     owner_id = Column(Integer, ForeignKey('users.user_id'))
     load_dt = Column(DateTime)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
+
+# class DeviceN(Base):
+#     __tablename__ = 'devicen'
+#     device_id = Column(Integer, primary_key=True, index=True)
+#     facility_id = Column(Integer, ForeignKey('facility.facility_id'))
+#     owner_id = Column(Integer, ForeignKey('users.user_id'))
+#     load_dt = Column(DateTime)
+#     created_at = Column(DateTime)
+#     updated_at = Column(DateTime)
 
 class DeviceRun(Base):
     __tablename__ = 'device_run'

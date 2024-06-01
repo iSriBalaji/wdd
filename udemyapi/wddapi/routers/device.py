@@ -72,9 +72,13 @@ async def create_device(user: user_dependency, db:db_dependency, new_device: Dev
     # print(user)
     new_device = Device(**new_device.dict(), owner_id = user.get('user_id'))
     new_device = create_device_id(db, new_device)
+
     db.add(new_device)
     db.commit()
-    return True
+    db.refresh(new_device)
+
+    return_body = new_device.__dict__
+    return return_body
 
 @router.put("/update/{device_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def update_device(user:user_dependency, db:db_dependency, device_info: DeviceRequest, device_id: int = Path(gt=0)):
@@ -119,13 +123,13 @@ def create_device_id(db, device: DeviceRequest):
     device_cnt = db.query(Device).count()
 
     current_datetime = datetime.now(timezone('America/New_York'))
-    device.run_id = str(uuid4())
+    # device.run_id = str(uuid4())
     device.load_dt = current_datetime
     device.created_at = current_datetime
     device.updated_at = current_datetime
 
     if(device_cnt==0):
-        device.device_id = 1
+        device.device_id = 91023
     else:
         last_device_id = db.query(Device).order_by(Device.device_id.desc()).first().device_id
         device.device_id = last_device_id + 1

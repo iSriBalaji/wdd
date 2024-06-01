@@ -23,6 +23,8 @@ class Users(BaseModel):
     email: str
     phone_number: str
     is_active: bool
+    is_notify_email: bool
+    is_notify_phone: bool
     role_id: int
     load_dt: datetime
     created_at: datetime
@@ -36,6 +38,8 @@ class UserRequest(BaseModel):
     email: str
     phone_number: str
     is_active: bool
+    is_notify_email: bool
+    is_notify_phone: bool
 
 class UserVerification(BaseModel):
     password: str
@@ -78,15 +82,15 @@ class Device():
 
 class DeviceRequest(BaseModel):
     # device_id: Optional[int] = Field(title = "device id will be created on its own")
-    house_id: int
+    facility_id: int
     # owner_id: int # we will get the owner id directly from the authenticated user who creates the device
-    run_id: str
-    temperature: float = Field(gt=-100.0, lt=100.0)
-    humidity: float = Field(gt=20.0, lt=80.0)
-    washer_vib_id: Optional[int] = None
-    dryer_vib_id: Optional[int] = None
-    motion_detected: bool
-    smoke_detected: bool
+    # owner_id: int
+    # temperature: float = Field(gt=-100.0, lt=100.0)
+    # humidity: float = Field(gt=20.0, lt=80.0)
+    # washer_vib_id: Optional[int] = None
+    # dryer_vib_id: Optional[int] = None
+    # motion_detected: bool
+    # smoke_detected: bool
     # load_dt: datetime
     # created_at: datetime
     # updated_at: datetime
