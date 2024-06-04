@@ -80,6 +80,14 @@ class Device():
         self.created_at = created_at
         self.updated_at = updated_at
 
+class DeviceUpdate(BaseModel):
+    # facility_id = int
+    owner_id = int
+    load_dt = datetime
+    created_at = datetime
+    updated_at = datetime
+
+
 class DeviceRequest(BaseModel):
     # device_id: Optional[int] = Field(title = "device id will be created on its own")
     facility_id: int

@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Annotated
 from sqlalchemy.orm import Session
 from database import get_db
-from schema import DeviceRequest
+from schema import DeviceRequest, DeviceUpdate
 from starlette import status
 from models import Device
 from uuid import uuid4
@@ -81,7 +81,7 @@ async def create_device(user: user_dependency, db:db_dependency, new_device: Dev
     return return_body
 
 @router.put("/update/{device_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def update_device(user:user_dependency, db:db_dependency, device_info: DeviceRequest, device_id: int = Path(gt=0)):
+async def update_device(user:user_dependency, db:db_dependency, device_info: DeviceUpdate, device_id: int = Path(gt=0)):
     """
     update a device info
     """
@@ -94,6 +94,7 @@ async def update_device(user:user_dependency, db:db_dependency, device_info: Dev
         raise HTTPException(status_code=404, detail=f"Device not found to update the device_id: {device_id} for the user {user.get('username')}")
 
     for key, value in device_info.dict().items():
+        # for each key in the record we are updating it
         if hasattr(matched_device, key):
             setattr(matched_device, key, value)
 
