@@ -1,0 +1,28 @@
+python3 -m pip install adafruit-circuitpython-dht
+sudo apt-get install libgpiod2
+pip install sounddevice numpy
+sudo apt-get install portaudio19-dev
+sudo apt-get install portaudio19-dev python3-pyaudio
+sudo apt-get install python3-RPi.GPIO
+pip3 install grovepi --break-system-packages
+pip install --upgrade RPi.GPIO --break-system-packages
+
+# enable I2C protocol in linux that piezo
+sudo modprobe i2c-dev
+# for bluettoth detection
+sudo apt install -y python3-bluez libbluetooth-dev libboost-python-dev libboost-thread-dev libglib2.0-dev bluez bluez-hcidump
+
+adduser lp $(whoami)
+
+#adafruit adc
+sudo apt-get update
+sudo apt-get install build-essential python-dev
+sudo pip3 install matplotlib
+sudo apt-get install libatlas-base-dev
+pip3 install numpy --upgrade
+sudo pip3 install adafruit-ads1x15
+sudo pip3 install adafruit-circuitpython-ads1x15
+
+
+to install packages
+python3 -m pip install adafruit-circuitpython-dht --break-system-packages

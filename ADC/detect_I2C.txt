@@ -1,0 +1,5 @@
+To know the I2C bus number
+sudo i2cdetect -y 1
+
+List all the i2c devices
+i2cdetect -l
