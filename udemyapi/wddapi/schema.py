@@ -82,10 +82,10 @@ class Device():
 
 class DeviceUpdate(BaseModel):
     # facility_id = int
-    owner_id = int
-    load_dt = datetime
-    created_at = datetime
-    updated_at = datetime
+    owner_id: int
+    load_dt: datetime
+    created_at: datetime
+    updated_at: datetime
 
 
 class DeviceRequest(BaseModel):

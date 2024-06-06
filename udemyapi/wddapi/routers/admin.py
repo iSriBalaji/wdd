@@ -54,7 +54,7 @@ async def read_user(user:user_dependency, db:db_dependency, username: str):
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"User {user.get('username')} doesn't have Admin access")
     
-@router.get("/all", status_code=status.HTTP_200_OK)
+@router.get("/devices", status_code=status.HTTP_200_OK)
 async def read_all(user:user_dependency, db:db_dependency):
     """
     return all the devices in the system with Admin access/role
