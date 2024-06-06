@@ -3,9 +3,9 @@ from datetime import datetime
 from typing import Annotated
 from sqlalchemy.orm import Session
 from database import get_db
-from schema import DeviceRequest, DeviceUpdate
+from schema import DeviceRequest, DeviceUpdate, DeviceRunRequest
 from starlette import status
-from models import Device
+from models import Device, DeviceRun
 from uuid import uuid4
 from routers.auth import get_current_user
 # from fastapi.openapi.utils import get_openapi
@@ -70,7 +70,7 @@ async def create_device(user: user_dependency, db:db_dependency, new_device: Dev
         raise HTTPException(status_code=404, detail=f"Not Authenticated")
 
     # print(user)
-    new_device = Device(**new_device.dict(), owner_id = user.get('user_id'))
+    new_device = Device(**new_device.model_dump(), owner_id = user.get('user_id'))
     new_device = create_device_id(db, new_device)
 
     db.add(new_device)
@@ -119,6 +119,30 @@ async def delete_device(user:user_dependency, db:db_dependency, device_id: int =
     db.query(Device).filter(Device.device_id == device_id).delete()
     db.commit()
 
+@router.post("/run",status_code=status.HTTP_201_CREATED)
+async def new_device_run(user: user_dependency, db:db_dependency, new_run: DeviceRunRequest):
+    """
+    add a device run to the system
+    """
+
+    if user is None:
+        raise HTTPException(status_code=404, detail=f"Not Authenticated")
+
+    # check if user has access
+
+    # check if device entered is in the device table
+
+    # print(user)
+    print(new_run.model_dump())
+    new_device_run = DeviceRun(**new_run.model_dump(), facility_id = 1234)
+    new_device_run = create_device_run(db, new_device_run)
+
+    db.add(new_device_run)
+    db.commit()
+    db.refresh(new_device_run)
+
+    return_body = new_device_run.__dict__
+    return return_body
 
 def create_device_id(db, device: DeviceRequest):
     device_cnt = db.query(Device).count()
@@ -135,3 +159,11 @@ def create_device_id(db, device: DeviceRequest):
         last_device_id = db.query(Device).order_by(Device.device_id.desc()).first().device_id
         device.device_id = last_device_id + 1
     return device
+
+def create_device_run(db, device_run: DeviceRunRequest):
+    current_datetime = datetime.now(timezone('America/New_York'))
+    device_run.run_id = str(uuid4())
+    device_run.load_dt = current_datetime
+    device_run.created_at = current_datetime
+    device_run.updated_at = current_datetime
+    return device_run
