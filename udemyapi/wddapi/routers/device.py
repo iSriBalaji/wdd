@@ -70,7 +70,7 @@ async def create_device(user: user_dependency, db:db_dependency, new_device: Dev
         raise HTTPException(status_code=404, detail=f"Not Authenticated")
 
     # print(user)
-    new_device = Device(**new_device.model_dump(), owner_id = user.get('user_id'))
+    new_device = Device(**new_device.dict(), owner_id = user.get('user_id'))
     new_device = create_device_id(db, new_device)
 
     db.add(new_device)
@@ -98,6 +98,7 @@ async def update_device(user:user_dependency, db:db_dependency, device_info: Dev
         if hasattr(matched_device, key):
             setattr(matched_device, key, value)
 
+    matched_device.owner_id = user.get('user_id')
     matched_device.updated_at = datetime.now()
 
     db.add(matched_device)
@@ -133,8 +134,7 @@ async def new_device_run(user: user_dependency, db:db_dependency, new_run: Devic
     # check if device entered is in the device table
 
     # print(user)
-    print(new_run.model_dump())
-    new_device_run = DeviceRun(**new_run.model_dump(), facility_id = 1234)
+    new_device_run = DeviceRun(**new_run.dict(), facility_id = 1234)
     new_device_run = create_device_run(db, new_device_run)
 
     db.add(new_device_run)
