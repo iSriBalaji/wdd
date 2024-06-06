@@ -87,6 +87,17 @@ class DeviceUpdate(BaseModel):
     created_at: datetime
     updated_at: datetime
 
+class DeviceRunRequest(BaseModel):
+    device_id: int
+    temperature: float
+    humidity: float
+    washer_vib: float
+    dryer_vib: float
+    motion_sense: float
+    smoke_sense: float
+
+
+
 
 class DeviceRequest(BaseModel):
     # device_id: Optional[int] = Field(title = "device id will be created on its own")
