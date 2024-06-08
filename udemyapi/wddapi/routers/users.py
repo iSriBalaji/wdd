@@ -9,7 +9,6 @@ from models import Device, Roles, Users
 from uuid import uuid4
 from routers.auth import get_current_user
 from passlib.context import CryptContext
-# from fastapi.openapi.utils import get_openapi
 from pytz import timezone
 
 router = APIRouter(prefix='/user', tags=['user'])

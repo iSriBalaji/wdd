@@ -8,7 +8,6 @@ from starlette import status
 from models import Device, DeviceRun
 from uuid import uuid4
 from routers.auth import get_current_user
-# from fastapi.openapi.utils import get_openapi
 from pytz import timezone
 
 router = APIRouter(prefix='/device', tags=['device'])
@@ -69,7 +68,6 @@ async def create_device(user: user_dependency, db:db_dependency, new_device: Dev
     if user is None:
         raise HTTPException(status_code=404, detail=f"Not Authenticated")
 
-    # print(user)
     new_device = Device(**new_device.dict(), owner_id = user.get('user_id'))
     new_device = create_device_id(db, new_device)
 
@@ -94,7 +92,6 @@ async def update_device(user:user_dependency, db:db_dependency, device_info: Dev
         raise HTTPException(status_code=404, detail=f"Device not found to update the device_id: {device_id} for the user {user.get('username')}")
 
     for key, value in device_info.dict().items():
-        # for each key in the record we are updating it
         if hasattr(matched_device, key):
             setattr(matched_device, key, value)
 
@@ -105,7 +102,7 @@ async def update_device(user:user_dependency, db:db_dependency, device_info: Dev
     db.commit()
 
 @router.delete("/delete/{device_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_device(user:user_dependency, db:db_dependency, device_id: int = Path(gt=0)): #path gives extra validation to path parameters
+async def delete_device(user:user_dependency, db:db_dependency, device_id: int = Path(gt=0)):
     """
     delete a device from the system
     """
@@ -133,7 +130,6 @@ async def new_device_run(user: user_dependency, db:db_dependency, new_run: Devic
 
     # check if device entered is in the device table
 
-    # print(user)
     new_device_run = DeviceRun(**new_run.dict(), facility_id = 1234)
     new_device_run = create_device_run(db, new_device_run)
 
@@ -144,11 +140,13 @@ async def new_device_run(user: user_dependency, db:db_dependency, new_run: Devic
     return_body = new_device_run.__dict__
     return return_body
 
+## Create Vibration Run - That has washer or dryer ID and the vibration info - POST, GET vibration in the specific module of washer or the dryer
+## They are linked by the run_id handle accordingly
+
 def create_device_id(db, device: DeviceRequest):
     device_cnt = db.query(Device).count()
 
     current_datetime = datetime.now(timezone('America/New_York'))
-    # device.run_id = str(uuid4())
     device.load_dt = current_datetime
     device.created_at = current_datetime
     device.updated_at = current_datetime
