@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from database import engine
 import models
-from routers import auth, admin, device, users
+from routers import auth, admin, device, users, facility, washer, dryer
 from starlette import status
 from fastapi.openapi.utils import get_openapi
 
@@ -23,6 +23,9 @@ app.include_router(auth.router)
 app.include_router(device.router)
 app.include_router(admin.router)
 app.include_router(users.router)
+app.include_router(washer.router)
+app.include_router(dryer.router)
+app.include_router(facility.router)
 
 models.Base.metadata.create_all(bind=engine) # we combine models.py and database.py here
 # this only runs when the wdd.db does not exist
