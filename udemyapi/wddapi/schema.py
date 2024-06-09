@@ -96,7 +96,54 @@ class DeviceRunRequest(BaseModel):
     motion_sense: float
     smoke_sense: float
 
+"""
+Washer Brand: 
+In operation from:
+is_active:
 
+Dryer Brand
+In operation from:
+is_active:
+
+Facility
+buiding no:
+Street name:
+city:
+Zipcode:
+country:
+no of units:
+no_of_tenants
+machine in basement
+
+# remove coordinated from it
+"""
+
+class DeviceRegister(BaseModel):
+
+    building_no: str
+    street_name: str
+    city:str
+    state:str
+    zipcode: str
+    country: str
+    no_of_units: int
+    no_of_tenants: int
+    machine_in_basement: bool
+    is_apartment: bool
+    
+    washer_brand_name: str
+    washer_in_operation_from: datetime
+    washer_is_active: bool
+
+    dryer_brand_name: str
+    dryer_in_operation_from: datetime
+    dryer_is_active: bool
+
+class DeviceResgisterResponse(BaseModel):
+    device_id: int
+    facility_id: int
+    washer_id: int
+    dryer_id: int
 
 
 class DeviceRequest(BaseModel):
