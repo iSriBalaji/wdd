@@ -165,7 +165,7 @@ class DeviceInfo(Base):
     total_RAM = Column(Float)
     total_ROM = Column(Float)
     notes = Column(String)
-    hash_id = Column(Integer) #SHA256
+    hash_id = Column(Integer) #SHA256 of all columns except load_dt, created_at, updated_at
     load_dt = Column(DateTime)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)

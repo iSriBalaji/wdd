@@ -1,4 +1,3 @@
-# if they delete the device it should delete all related records from other tables
 from fastapi import APIRouter, Path, Query, HTTPException, Depends
 from datetime import datetime
 from typing import Annotated

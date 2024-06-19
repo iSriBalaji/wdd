@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from database import engine
 import models
-from routers import auth, admin, device, users, facility, washer, dryer
+from routers import auth, admin, device, users, facility, washer, dryer, device_config
 from starlette import status
 from fastapi.openapi.utils import get_openapi
 
@@ -21,6 +21,7 @@ app.openapi = get_custom_openapi
 
 app.include_router(auth.router)
 app.include_router(device.router)
+app.include_router(device_config.router)
 app.include_router(admin.router)
 app.include_router(users.router)
 app.include_router(washer.router)
