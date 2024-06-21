@@ -147,7 +147,7 @@ class MachineStatus(Base):
 
 class DeviceInfo(Base):
     __tablename__ = "device_info"
-    mac_address = Column(String, primary_key=True, index=True)
+    mac_address = Column(String)
     device_id = Column(Integer, ForeignKey('device.device_id'))
     ip_address = Column(String)
     serial_no_pi = Column(String)
@@ -165,7 +165,7 @@ class DeviceInfo(Base):
     total_RAM = Column(Float)
     total_ROM = Column(Float)
     notes = Column(String)
-    hash_id = Column(Integer) #SHA256
+    hash_id = Column(String, primary_key=True, index=True) #SHA256 of all columns except load_dt, created_at, updated_at
     load_dt = Column(DateTime)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)

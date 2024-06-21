@@ -1,5 +1,3 @@
-# dryer create, post, put, delete
-# this table can exist alone as well, we can remove the device ID from this table - if that's the case
 from fastapi import APIRouter, Path, Query, HTTPException, Depends
 from datetime import datetime
 from typing import Annotated

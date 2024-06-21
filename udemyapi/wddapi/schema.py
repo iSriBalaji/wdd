@@ -145,6 +145,24 @@ class DeviceResgisterResponse(BaseModel):
     washer_id: int
     dryer_id: int
 
+class DeviceConfigPy(BaseModel):
+    mac_address : str
+    ip_address : str
+    serial_no_pi : str
+    subnet_mask : str
+    gateway : str
+    dns_server : str
+    wifi_ssid : str
+    wifi_bssid : str
+    hostname : str
+    model : str
+    os_version : str
+    kernel : str
+    shell : str
+    processor : str
+    total_RAM : float
+    total_ROM : float
+    notes : str
 
 class DeviceRequest(BaseModel):
     # device_id: Optional[int] = Field(title = "device id will be created on its own")
