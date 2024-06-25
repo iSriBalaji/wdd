@@ -1,0 +1,14 @@
+coreutils
+inetutils-hostname
+grep
+coreutils
+net-tools
+iproute2
+gawk
+wireless-tools
+libraspberrypi-bin
+procps
+coreutils
+util-linux
+iputils-ping
+procps

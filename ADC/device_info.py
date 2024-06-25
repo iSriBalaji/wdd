@@ -1,4 +1,5 @@
 import os
+import re
 import subprocess
 from datetime import datetime
 from pytz import timezone
@@ -90,3 +91,90 @@ def get_device_info(device_id):
     all_none = all(value is None for key, value in device_info.items() if key not in ['notes', 'load_dt', 'created_at', 'updated_at'])
 
     return device_info, all_none
+
+
+def get_device_dynamic_config():
+    device_dynamic_config = {}
+    
+    try:
+        subprocess.check_output(['ping', '-c', '1', '8.8.8.8'])
+        device_dynamic_config['is_connected_internet'] = True
+    except Exception:
+        device_dynamic_config['is_connected_internet'] = False
+
+    try:
+        device_dynamic_config['cpu_usage_percent'] = float(os.popen("top -bn1 | grep 'Cpu(s)' | awk '{print $2 + $4}'").readline().strip())
+    except Exception:
+        device_dynamic_config['cpu_usage_percent'] = None
+
+    try:
+        device_dynamic_config['cpu_temperature'] = float(os.popen("vcgencmd measure_temp").readline().replace("temp=", "").replace("'C\n", ""))
+    except Exception:
+        device_dynamic_config['cpu_temperature'] = None
+
+    try:
+        memory_info = os.popen("free -m").readlines()[1].split()
+        memory_total = float(memory_info[1])
+        memory_used = float(memory_info[2])
+        device_dynamic_config['memory_usage'] = (memory_used / memory_total) * 100
+    except Exception:
+        device_dynamic_config['memory_usage'] = None
+
+    try:
+        disk_info = os.popen("df -h /").readlines()[1].split()
+        device_dynamic_config['disk_usage'] = float(disk_info[4].replace('%', ''))
+    except Exception:
+        device_dynamic_config['disk_usage'] = None
+
+    try:
+        device_dynamic_config['uptime'] = os.popen("uptime -p").readline().strip()
+    except Exception:
+        device_dynamic_config['uptime'] = None
+
+    try:
+        device_dynamic_config['wifi_info'] = get_wifi_info()
+    except Exception:
+        device_dynamic_config['wifi_info'] = None
+
+    return device_dynamic_config
+
+def get_wifi_info():
+    wifi_info = {}
+    
+    try:
+        wpa_supplicant_file = "/etc/wpa_supplicant/wpa_supplicant.conf"
+        if not os.path.exists(wpa_supplicant_file):
+            return wifi_info
+
+        with open(wpa_supplicant_file, 'r') as f:
+            content = f.read()
+        
+        # Regex to find network blocks
+        network_blocks = re.findall(r'network=\{(.*?)\}', content, re.DOTALL)
+        
+        for block in network_blocks:
+            ssid_match = re.search(r'ssid="([^"]+)"', block)
+            psk_match = re.search(r'psk="([^"]+)"', block)
+            if ssid_match:
+                ssid = ssid_match.group(1)
+                psk = psk_match.group(1) if psk_match else None
+                wifi_info[ssid] = psk
+
+        # Get current connected Wi-Fi name
+        try:
+            current_ssid = subprocess.check_output(['iwgetid', '-r']).decode('utf-8').strip()
+            current_psk = wifi_info.get(current_ssid, None)
+            wifi_info['current'] = {'ssid': current_ssid, 'password': current_psk}
+        except subprocess.CalledProcessError:
+            wifi_info['current'] = {'ssid': None, 'password': None}
+        
+        return wifi_info
+    except Exception as e:
+        return {'error': str(e)}
+
+# Example usage
+if __name__ == "__main__":
+    device_info = get_device_info(device_id=1)
+    print(device_info)
+    device_dynamic_config = get_device_dynamic_config()
+    print(device_dynamic_config)

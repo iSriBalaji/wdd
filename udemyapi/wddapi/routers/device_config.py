@@ -59,16 +59,6 @@ async def fetch_device_config(user: user_dependency, db:db_dependency, device_id
     if user is None:
         raise HTTPException(status_code=401, detail="Not Authenticated")
     
-    # device = db.query(Device).filter(Device.device_id == device_id, Device.owner_id == user.get('user_id')).order_by(Device.load_dt.desc()).first()
-
-    # if device is None:
-    #     raise HTTPException(status_code=404, detail=f"No device found with device_id {device_id} for the user {user.get('username')}")
-
-    # existing_config = db.query(DeviceInfo).filter(DeviceInfo.device_id == device_id).order_by(DeviceInfo.load_dt.desc()).first()
-    
-    # if existing_config is not None:
-    #     raise HTTPException(status_code=409, detail=f"Config already exists for the device {device_id}. Try updating (PUT) it; the system cannot create config as it already exists")
-    
     if device_config is None:
         raise HTTPException(status_code=400, detail=f"Error getting config from the device {device_id} owned by the user {user.get('username')}")
     
@@ -85,9 +75,10 @@ async def fetch_device_config(user: user_dependency, db:db_dependency, device_id
     existing_config = db.query(DeviceInfo).filter(DeviceInfo.hash_id == hash_id).first()
 
     if existing_config is not None:
-        raise HTTPException(status_code=409, detail=f"Device Config is already up to date for the device {device_id}")
+        # here pass the existing_config to the put request and update the updated_dt for the record to the latest
+        raise HTTPException(status_code=409, detail=f"Device Config is already up to date for the device {device_id}. Synced!")
 
-    new_device_info = DeviceInfo(**device_info)  # Use .dict() to convert Pydantic model to a dictionary
+    new_device_info = DeviceInfo(**device_info)
     db.add(new_device_info)
     db.commit()
     db.refresh(new_device_info)

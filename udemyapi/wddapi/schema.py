@@ -164,6 +164,14 @@ class DeviceConfigPy(BaseModel):
     total_ROM : float
     notes : str
 
+class DeviceDynamicConfigPy(BaseModel):
+    is_connected_internet : bool
+    cpu_usage_percent : float
+    cpu_temperature : float
+    memory_usage : float
+    disk_usage : float
+    uptime : str
+
 class DeviceRequest(BaseModel):
     # device_id: Optional[int] = Field(title = "device id will be created on its own")
     facility_id: int
