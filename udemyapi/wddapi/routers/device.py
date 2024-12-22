@@ -16,6 +16,12 @@ router = APIRouter(prefix='/device', tags=['device'])
 db_dependency = Annotated[Session, Depends(get_db)]
 user_dependency = Annotated[dict, Depends(get_current_user)]
 
+"""
+To start: 
+
+In future: Have a camera endpoint in the future
+"""
+
 @router.get("/all", status_code=status.HTTP_200_OK)
 async def get_all_devices(user:user_dependency, db:db_dependency):
     """
@@ -51,6 +57,12 @@ async def run_status(user:user_dependency, db:db_dependency, run_id: str):
     """
     return the info of a specific run of the device
     """
+
+    """
+    To start: update the endpoint to fetch the run status based on the run_id
+              think how this should in the application for better user experience
+    """
+    
     if user is None:
         raise HTTPException(status_code=404, detail=f"Not Authenticated")
 
@@ -65,6 +77,10 @@ async def run_status(user:user_dependency, db:db_dependency, run_id: str):
 async def register_device(user: user_dependency, db:db_dependency, new_device: DeviceRegister):
     """
     add a device to the system
+    """
+    """
+    To start: create a normalization table for state and country to get the IDs; Also make sure 
+    to handle this in the application side for data quality checks
     """
     if user is None:
         raise HTTPException(status_code=404, detail=f"Not Authenticated")
@@ -94,6 +110,11 @@ async def update_device(user:user_dependency, db:db_dependency, device_info: Dev
     """
     update a device info
     """
+
+    """
+    To start: need to fix the update endpoint it is not updating properly
+              also make sure to normalize data and also updat the facility referential tables
+    """
     if user is None:
         raise HTTPException(status_code=404, detail=f"Not Authenticated")
     
@@ -117,6 +138,9 @@ async def delete_device(user:user_dependency, db:db_dependency, device_id: int =
     """
     delete a device from the system
     """
+    """
+    To start: do a cascading delete on the tables to delete all the references in the other tables
+    """
     if user is None:
         raise HTTPException(status_code=404, detail=f"Not Authenticated")
     
@@ -134,6 +158,13 @@ async def delete_device(user:user_dependency, db:db_dependency, device_id: int =
 async def new_device_run(user: user_dependency, db:db_dependency, new_run: DeviceRunRequest):
     """
     add a device run to the system
+    """
+
+
+    """
+    To start: add x, y, z accelerometer columns to the table after testing the sensor in the rasperry pi
+              need to create a materialized view out of the table to know if the washer or dryer is running or some logic
+              or pass it to the ML model to detect the status
     """
 
     if user is None:

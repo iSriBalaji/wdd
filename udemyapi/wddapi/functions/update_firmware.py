@@ -51,7 +51,7 @@ def update_firmware():
         return 'firmware_is_updated'
 
     if not install_packages(missing_commands):
-        return 'Failed to install some packages'
+        print('Failed to install some os packages')
     
     still_missing_packages = [pkg for pkg in missing_commands if not is_command_installed(pkg)]
 
@@ -69,13 +69,14 @@ def install_packages_from_requirements(file_path=PY_REQUIREMENT_PATH):
     not_installed = []
     for package in packages:
         if package not in python_installed_list:
-            not_installed.append(package)
             subprocess.call(['pip', 'install', package])
-
-    # Check if all packages are installed
+    
     for package in packages:
         if package not in python_installed_list:
-            return tuple(not_installed)
+            not_installed.append(package)
+    
+    if not_installed:
+        return not_installed
 
     return "python_package_upto_date"
 

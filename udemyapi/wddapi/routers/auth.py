@@ -24,7 +24,7 @@ bcrypt_context = CryptContext(schemes = ['bcrypt'], deprecated = 'auto')
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
 
 
-@router.post("", status_code=status.HTTP_201_CREATED)
+@router.post("/sign_up", status_code=status.HTTP_201_CREATED)
 async def create_user(db:db_dependency, user_request: UserRequest):
     """
     Create users in the app
@@ -68,6 +68,7 @@ async def create_user(db:db_dependency, user_request: UserRequest):
         raise HTTPException(status_code=404, detail=f"Failed to create user - {e}")
 
 
+## Learnt that Swagger UI look for the /token endpoint to authenticate in the UI - so do not change the endpoint name to another name
 @router.post("/token", status_code=status.HTTP_201_CREATED, response_model=Token)
 async def create_token_for_login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db:db_dependency):
     """
